@@ -42,6 +42,7 @@ num_steps = 0
 lower_bound = 0
 upper_bound = 10000
 steps = 0
+possible = True
 
 #Getting User data
 annual_salary = float(input("Please enter your annual salary: "))
@@ -50,31 +51,53 @@ annual_salary = float(input("Please enter your annual salary: "))
 #Performing conversions from annual values to month values: 
 monthly_salary = annual_salary/12
 
-#Bisection Search
-while (not((current_savings > (total_cost*portion_down_payment - 100))&((current_savings < (total_cost*portion_down_payment + 100))))):
 
-    current_savings = 0
-    monthly_salary = annual_salary/12
-
-    for x in range(36):
-        current_savings += current_savings*r/12
-        current_savings += portion_saved*monthly_salary/10000
-        if x%5 == 0:
-            monthly_salary = monthly_salary*(1 + semi_annual_raise)
-
-    if(current_savings > (total_cost*portion_down_payment + 100)):
-        upper_bound = portion_saved
-        portion_saved = round((lower_bound + upper_bound)/2)
-    if(current_savings < (total_cost*portion_down_payment - 100)):
-        lower_bound = portion_saved
-        portion_saved = round((lower_bound + upper_bound)/2)
-
-    #print("Upper Bound: ", upper_bound, "Lower Bound: ", lower_bound, "   Portion Saved: ", portion_saved, "Savings: ", current_savings)
-    steps += 1 
+#Testing for a corner case to see if it is even possible to get to the house price in 36 months when saving everything.   
+for x in range(36):
+    current_savings += current_savings*r/12
+    current_savings += monthly_salary
+    if x%5 == 0:
+        monthly_salary = monthly_salary*(1 + semi_annual_raise)
+ 
+if(current_savings < total_cost*portion_down_payment - 100):
+    possible = False
 
 
-#Prints out the number of months: 
-portion_saved = round(portion_saved/10000, 4)
+#Ensuring that we are not hitting the corner case: 
+if(possible):
+    #Bisection Search
+    while (not((current_savings > (total_cost*portion_down_payment - 100))&((current_savings < (total_cost*portion_down_payment + 100))))):
 
-print("Best Rate: ", portion_saved)
-print("Steps in Bisection Search: ", steps)
+        current_savings = 0
+        monthly_salary = annual_salary/12
+
+        #This for loop generates the current savings after 36 months at the giving portion saved
+        for x in range(36):
+            current_savings += current_savings*r/12
+            current_savings += portion_saved*monthly_salary/10000
+            if x%5 == 0:
+                monthly_salary = monthly_salary*(1 + semi_annual_raise)
+
+        #The Following if statements will determine whether we want to look at the upper half or lower half, and then sets the new portion saved value
+        if(current_savings > (total_cost*portion_down_payment + 100)):
+            upper_bound = portion_saved
+            portion_saved = round((lower_bound + upper_bound)/2)
+        if(current_savings < (total_cost*portion_down_payment - 100)):
+            lower_bound = portion_saved
+            portion_saved = round((lower_bound + upper_bound)/2)
+
+        #Below print statemment was used for debugging. 
+        #print("Upper Bound: ", upper_bound, "Lower Bound: ", lower_bound, "   Portion Saved: ", portion_saved, "Savings: ", current_savings)
+
+        #At the end of the while loop this adds 1 to the nubmer of bisections we have performed. 
+        steps += 1 
+
+
+    #Prints out the best rate: 
+    portion_saved = round(portion_saved/10000, 4)
+
+    print("Best Rate: ", portion_saved)
+    print("Steps in Bisection Search: ", steps)
+
+else:
+    print("Not possible to get to the down payement value within 3 years!")
