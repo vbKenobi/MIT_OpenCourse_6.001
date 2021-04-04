@@ -135,12 +135,22 @@ def num_unique_letters(secret_word):
 
     return len(unique_letters)
 
+def remove_underscore(word):
+    no_underscore = ""
+    word = word.replace(" ", "")
+    for x in range(len(word)):
+        if(word[x] != "_"):
+            no_underscore += word[x]
+
+    return no_underscore
+
 def start_game():
     global secret_string
     global secret_len
     global num_guesses
     global user_guesses
     global warnings
+    global wordlist
 
     wordlist = load_words()
 
@@ -191,6 +201,40 @@ def is_valid_input(user_input, user_guesses):
 
     return True
 
+def match_with_gaps(my_word, other_word):
+    my_word = my_word.replace(" ", "")
+    other_word = other_word.replace(" ", "")
+    no_underscore = remove_underscore(my_word)
+
+    if(len(my_word) != len(other_word)):
+        return False
+
+    for x in range(len(my_word)):
+        if(my_word[x] == "_"):
+            for y in no_underscore:
+                if(other_word[x] == y):
+                    return False
+        
+        elif(my_word[x] != other_word[x]):
+            return False
+        
+    return True
+
+def show_possible_matches(my_word):
+    global wordlist
+    counter = 0
+    list_of_words = []
+
+    for x in wordlist:
+        if(match_with_gaps(my_word, x)):
+            list_of_words += [x]
+            counter += 1
+    if(counter == 0):
+        print("No Matches Found")
+    else:
+        print(*list_of_words, sep = ", ") 
+
+
 def hangman_iterations():
     global user_guesses
     global num_guesses
@@ -200,7 +244,11 @@ def hangman_iterations():
     user_input = input("Please guess a letter: ")
     user_input = str.lower(user_input)
 
-    if(not is_valid_input(user_input, user_guesses)):
+
+    if(user_input == "*"):
+        show_possible_matches(get_guessed_word(secret_string, user_guesses))
+
+    elif(not is_valid_input(user_input, user_guesses)):
             print(get_guessed_word(secret_string, user_guesses))
             print("-------------")
     else:
@@ -227,5 +275,6 @@ def Play_hangamn():
         if(num_guesses <= 0):
             print("Sorry, you ran out of guesses! The word was", secret_string)
             break
+
 
 Play_hangamn()
