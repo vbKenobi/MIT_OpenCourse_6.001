@@ -198,6 +198,7 @@ def hangman_iterations():
     print("You have", num_guesses, "guesses left")
     print("The avalaible letters are:", get_avaliable_letters(user_guesses))
     user_input = input("Please guess a letter: ")
+    user_input = str.lower(user_input)
 
     if(not is_valid_input(user_input, user_guesses)):
             print(get_guessed_word(secret_string, user_guesses))
@@ -214,15 +215,17 @@ def hangman_iterations():
                 num_guesses += -1
         print("-------------")
 
+def Play_hangamn():
+    start_game()
+    while(num_guesses > 0 and not is_word_guessed(secret_string, user_guesses)):
+        hangman_iterations()
+        
+        if(is_word_guessed(secret_string, user_guesses)):
+            print("Congratulations! You Won!")
+            print("Your total score for this game is", num_guesses*num_unique_letters(secret_string))
 
-start_game()
-while(num_guesses > 0 and not is_word_guessed(secret_string, user_guesses)):
-    hangman_iterations()
-    
-    if(is_word_guessed(secret_string, user_guesses)):
-        print("Congratulations! You Won!")
-        print("Your total score for this game is", num_guesses*num_unique_letters(secret_string))
+        if(num_guesses <= 0):
+            print("Sorry, you ran out of guesses! The word was", secret_string)
+            break
 
-    if(num_guesses <= 0):
-        print("Sorry, you ran out of guesses! The word was", secret_string)
-        break
+Play_hangamn()
