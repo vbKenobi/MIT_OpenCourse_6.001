@@ -112,7 +112,6 @@ def contains_letter(user_letter, secret_word):
     for x in secret_word:
         if(user_letter == x):
             return True
-            break
     
     return False
 
@@ -143,6 +142,7 @@ def remove_underscore(word):
             no_underscore += word[x]
 
     return no_underscore
+
 
 def start_game():
     global secret_string
@@ -202,9 +202,24 @@ def is_valid_input(user_input, user_guesses):
     return True
 
 def match_with_gaps(my_word, other_word):
+
+    global user_guesses
+    found_char = False 
+    wrong = ""
+
     my_word = my_word.replace(" ", "")
     other_word = other_word.replace(" ", "")
     no_underscore = remove_underscore(my_word)
+
+
+    for a in user_guesses:
+        found_char = False
+        for b in no_underscore:
+            if(a == b):
+                found_char = True
+                break
+        if(not found_char):
+            wrong = wrong + a
 
     if(len(my_word) != len(other_word)):
         return False
@@ -217,7 +232,12 @@ def match_with_gaps(my_word, other_word):
         
         elif(my_word[x] != other_word[x]):
             return False
-        
+
+    for z in wrong:
+        for j in other_word:
+            if(z == j):
+                return False
+              
     return True
 
 def show_possible_matches(my_word):
@@ -276,5 +296,8 @@ def Play_hangamn():
             print("Sorry, you ran out of guesses! The word was", secret_string)
             break
 
+continue_play = "y"
 
-Play_hangamn()
+while(continue_play == "y"):
+    Play_hangamn()
+    continue_play = input("Would you like to play another game: ")
