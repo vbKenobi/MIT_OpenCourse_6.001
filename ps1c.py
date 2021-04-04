@@ -33,7 +33,7 @@ import numpy as np
 portion_down_payment = 0.25
 current_savings = 0
 r = 0.04
-monthly_salary = 0
+monthly_salary = 0.0
 months = 36
 semi_annual_raise = 0.07
 total_cost = 1000000
@@ -66,7 +66,7 @@ if(current_savings < total_cost*portion_down_payment - 100):
 #Ensuring that we are not hitting the corner case: 
 if(possible):
     #Bisection Search
-    while (not((current_savings > (total_cost*portion_down_payment - 100))&((current_savings < (total_cost*portion_down_payment + 100))))):
+    while ((current_savings - total_cost*portion_down_payment < - 100) or (current_savings - total_cost*portion_down_payment > 100)):
 
         current_savings = 0
         monthly_salary = annual_salary/12
@@ -81,17 +81,16 @@ if(possible):
         #The Following if statements will determine whether we want to look at the upper half or lower half, and then sets the new portion saved value
         if(current_savings > (total_cost*portion_down_payment + 100)):
             upper_bound = portion_saved
-            portion_saved = round((lower_bound + upper_bound)/2)
-        if(current_savings < (total_cost*portion_down_payment - 100)):
+        else:
             lower_bound = portion_saved
-            portion_saved = round((lower_bound + upper_bound)/2)
+        
+        portion_saved = int(((lower_bound + upper_bound)/2))
 
         #Below print statemment was used for debugging. 
         #print("Upper Bound: ", upper_bound, "Lower Bound: ", lower_bound, "   Portion Saved: ", portion_saved, "Savings: ", current_savings)
 
         #At the end of the while loop this adds 1 to the nubmer of bisections we have performed. 
         steps += 1 
-
 
     #Prints out the best rate: 
     portion_saved = round(portion_saved/10000, 4)
