@@ -71,19 +71,19 @@ if(possible):
         current_savings = 0
         monthly_salary = annual_salary/12
 
-        #This for loop generates the current savings after 36 months at the giving portion saved
+        #This for loop generates the current savings after 36 months at the given portion saved
         for x in range(36):
             current_savings += current_savings*r/12
             current_savings += portion_saved*monthly_salary/10000
-            if x%5 == 0:
+            if (x+1)%6 == 0:
                 monthly_salary = monthly_salary*(1 + semi_annual_raise)
 
         #The Following if statements will determine whether we want to look at the upper half or lower half, and then sets the new portion saved value
         if(current_savings > (total_cost*portion_down_payment + 100)):
             upper_bound = portion_saved
-        else:
+        elif(current_savings < (total_cost*portion_down_payment - 100)):
             lower_bound = portion_saved
-        
+
         portion_saved = int(((lower_bound + upper_bound)/2))
 
         #Below print statemment was used for debugging. 
@@ -98,5 +98,17 @@ if(possible):
     print("Best Rate: ", portion_saved)
     print("Steps in Bisection Search: ", steps)
 
+"""Used for Debugging
+    print(current_savings)
+    current_savings = 0
+    monthly_salary = annual_salary/12
+    for x in range(36):
+        current_savings += current_savings*r/12
+        current_savings += 0.2206*monthly_salary
+        if (x+1)%6 == 0:
+            monthly_salary = monthly_salary*(1 + semi_annual_raise)
+
+    print(current_savings)
+"""
 else:
     print("Not possible to get to the down payement value within 3 years!")
