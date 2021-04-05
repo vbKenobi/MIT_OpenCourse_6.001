@@ -144,73 +144,57 @@ def remove_underscore(word):
     return no_underscore
 
 
-def start_game():
-    global secret_string
-    global secret_len
-    global num_guesses
-    global user_guesses
-    global warnings
-    global wordlist
+def start_game(secret_string):
 
-    wordlist = load_words()
-
-    secret_string = choose_word(wordlist) 
-    secret_len = len(secret_string)
-    num_guesses = secret_len + 2
-    user_guesses = ""
-    warnings = 3
+    num_guesses = len(secret_string) + 2
 
     print("Welcome to the game Hangman!")
-    print("I am thinking of a word that is", secret_len, "characters long")
+    print("I am thinking of a word that is", len(secret_string), "characters long")
     print("-------------")
 
-def is_valid_input(user_input, user_guesses):
+    return num_guesses
 
-    global warnings
-    global num_guesses
+def is_valid_input(user_input, user_guesses, warnings, num_guesses):
 
     if(len(user_input) != 1):
         if(warnings > 0):
             warnings += -1
             print("You have already eneterd a guess that is more than one character, you have", warnings, "warnings remainging")
-            return False
+            return False, warnings, num_guesses
         else:
             num_guesses += -1
             print("You have entered a guess that is more than one character. You have zero warnings and you are loosing a guess, you have", num_guesses, "guesses left")
-            return False
+            return False, warnings, num_guesses
 
     if(contains_letter(user_input, user_guesses)):
         if(warnings > 0):
             warnings += -1
             print("You have already eneterd that guess, you have", warnings, "warnings remaining")
-            return False
+            return False, warnings, num_guesses
         else:
             num_guesses += -1
             print("You have already entered that guess. You have zero warnings and you are loosing a guess, you have", num_guesses, "guesses left")
-            return False
+            return False, warnings, num_guesses
 
     if(not(str.isalpha(user_input))):
         if(warnings > 0):
             warnings += -1
             print("You have eneterd a guess that is not a letter, you have", warnings, "warnings remaining")
-            return False
+            return False, warnings, num_guesses
         else:
             num_guesses += -1
             print("You have entered a guess that is not a letter. You have zero warnings and you are loosing a guess, you have", num_guesses, "guesses left")
-            return False
+            return False, warnings, num_guesses
 
-    return True
+    return True, warnings, num_guesses
 
-def match_with_gaps(my_word, other_word):
+def match_with_gaps(my_word, other_word, user_guesses):
 
-    global user_guesses
     found_char = False 
     wrong = ""
-
     my_word = my_word.replace(" ", "")
     other_word = other_word.replace(" ", "")
     no_underscore = remove_underscore(my_word)
-
 
     for a in user_guesses:
         found_char = False
@@ -240,13 +224,12 @@ def match_with_gaps(my_word, other_word):
               
     return True
 
-def show_possible_matches(my_word):
-    global wordlist
+def show_possible_matches(my_word, wordlist, user_guesses):
     counter = 0
     list_of_words = []
 
     for x in wordlist:
-        if(match_with_gaps(my_word, x)):
+        if(match_with_gaps(my_word, x, user_guesses)):
             list_of_words += [x]
             counter += 1
     if(counter == 0):
@@ -255,38 +238,47 @@ def show_possible_matches(my_word):
         print(*list_of_words, sep = ", ") 
 
 
-def hangman_iterations():
-    global user_guesses
-    global num_guesses
+def hangman_iterations(num_guesses, user_guesses, wordlist, warnings, secret_string):
 
     print("You have", num_guesses, "guesses left")
     print("The avalaible letters are:", get_avaliable_letters(user_guesses))
     user_input = input("Please guess a letter: ")
     user_input = str.lower(user_input)
 
+     
 
     if(user_input == "*"):
-        show_possible_matches(get_guessed_word(secret_string, user_guesses))
-
-    elif(not is_valid_input(user_input, user_guesses)):
+        show_possible_matches(get_guessed_word(secret_string, user_guesses), wordlist, user_guesses)
+    
+    else:
+        bool_valid_input, warnings, num_guesses = is_valid_input(user_input, user_guesses, warnings, num_guesses)
+        if(not bool_valid_input):
             print(get_guessed_word(secret_string, user_guesses))
             print("-------------")
-    else:
-        user_guesses += user_input
-        if(contains_letter(user_input, secret_string)):
-            print("Good Guess:" , get_guessed_word(secret_string, user_guesses))
         else:
-            print("Oops! That letter isn't in my word:" , get_guessed_word(secret_string, user_guesses))
-            if(contains_letter(user_input, "aeiou")):
-                num_guesses += -2    
+            user_guesses += user_input
+            if(contains_letter(user_input, secret_string)):
+                print("Good Guess:" , get_guessed_word(secret_string, user_guesses))
             else:
-                num_guesses += -1
-        print("-------------")
+                print("Oops! That letter isn't in my word:" , get_guessed_word(secret_string, user_guesses))
+                if(contains_letter(user_input, "aeiou")):
+                    num_guesses += -2    
+                else:
+                    num_guesses += -1
+            print("-------------")
+
+    return num_guesses, user_guesses, warnings
+
 
 def Play_hangamn():
-    start_game()
+    wordlist = load_words()
+    secret_string = choose_word(wordlist)
+    user_guesses = ""
+    warnings = 3
+    num_guesses = start_game(secret_string)
+
     while(num_guesses > 0 and not is_word_guessed(secret_string, user_guesses)):
-        hangman_iterations()
+        num_guesses, user_guesses, warnings = hangman_iterations(num_guesses, user_guesses, wordlist, warnings, secret_string)
         
         if(is_word_guessed(secret_string, user_guesses)):
             print("Congratulations! You Won!")
