@@ -474,6 +474,23 @@ hand = {'a': 2, 'j': 1, 'e': 1, 'f': 2, '*': 1, 'r': 1, 'x': 2}
 
 if __name__ == '__main__':
     word_list = load_words()
+
+    print("")
+    print("WELCOME THE 6.001 WORD GAME")
+    print("The 6.001 word game is very similar to scrabble, you will be given a hand of letters and then will be asked to construct a word out of it.")
+    print("The score of each word will be determined based on the number of letters in your hand and the types of letters used in the word")
+    print("If you enter a wrong word you will still loose the letters that you used!")
+    print("Each hand will contain a special * character, this star character can represent any of the vowels so use it wisely!")
+    print("Special Option 1: At the beggining of ONLY one hand you can subsitute one of the letters out for another randomly chosen letter")
+    print("Special Option 2: At the end of ONLY one hand you can choose to repeat the same hand. The highest score from either attempt will be used.")
+    print("")
+
+    rules = " "
+    while(rules != "yes"):
+        rules = str.lower(input("Do you understand the game rules (type yes or take more time to review!): "))
+    
+    print("")
+
     print("Total Score across all hands: ", play_game(word_list))
     print("---------------------------------------------------")
 
