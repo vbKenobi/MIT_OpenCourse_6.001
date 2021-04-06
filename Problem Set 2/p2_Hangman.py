@@ -22,7 +22,7 @@ import string
 import numpy as np
 
 #Getting the txt file of words
-WORDLIST_FILENAME = "words.txt"
+WORDLIST_FILENAME = "Problem Set 2/words.txt"
 
 def load_words():
     """
