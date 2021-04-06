@@ -447,9 +447,9 @@ def play_game(word_list):
             else:
                 total_score_across += score_1
 
-
             print("")
 
+    print("---------------------------------------------------")
     return total_score_across
     
 #
@@ -475,4 +475,5 @@ hand = {'a': 2, 'j': 1, 'e': 1, 'f': 2, '*': 1, 'r': 1, 'x': 2}
 if __name__ == '__main__':
     word_list = load_words()
     print("Total Score across all hands: ", play_game(word_list))
+    print("---------------------------------------------------")
 
