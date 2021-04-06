@@ -307,7 +307,7 @@ def play_hand(hand, word_list):
                 print(user_input, "earned", get_word_score(user_input, len(hand_copy)), "points.")
                 # and the updated total score
                 total_score += get_word_score(user_input, len(hand_copy))
-                print("Total Score:", total_score)
+                print("Total Score for this hand:", total_score)
             
             # Otherwise (the word is not valid):
             else:
@@ -405,7 +405,7 @@ def play_game(word_list):
 
     word_list: list of lowercase strings
     """
-    number_of_hands = int(input("Please enter the number of hands you would like tp play: "))
+    number_of_hands = int(input("Please enter the number of hands you would like to play: "))
     total_score_across = 0
     substitute_for_round = False
     replay_for_round = False
@@ -448,7 +448,8 @@ def play_game(word_list):
                 total_score_across += score_1
 
             print("")
-
+        else:
+            total_score_across += score_1
     print("---------------------------------------------------")
     return total_score_across
     
